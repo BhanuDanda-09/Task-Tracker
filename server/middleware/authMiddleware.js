@@ -1,0 +1,44 @@
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+
+/**
+ * Protect middleware — verifies JWT and attaches req.user
+ */
+const protect = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer ")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Not authorised. No token provided.",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id);
+
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "User no longer exists.",
+      });
+    }
+
+    next();
+  } catch {
+    return res.status(401).json({
+      success: false,
+      message: "Not authorised. Token invalid or expired.",
+    });
+  }
+};
+
+export default protect;
