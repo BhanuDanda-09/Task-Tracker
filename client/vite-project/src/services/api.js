@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Base URL reads from Vite env variable (set VITE_API_URL in .env)
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "https://task-tracker-ilwc.onrender.com/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
